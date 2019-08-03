@@ -10,6 +10,8 @@ def load_au_suburbs() -> pd.DataFrame:
     df = pd.read_csv("Australian_Post_Codes_Lat_Lon.csv", converters={"type": lambda x: x.strip()})
     # Sanitise
     df = df.loc[df["type"] == "Delivery Area"]
+    del df["type"]
+    del df["dc"]
     return df
 
 
