@@ -7,7 +7,10 @@ from munch import munchify
 
 
 def load_au_suburbs() -> pd.DataFrame:
-    return pd.read_csv("Australian_Post_Codes_Lat_Lon.csv")
+    df = pd.read_csv("Australian_Post_Codes_Lat_Lon.csv", converters={"type": lambda x: x.strip()})
+    # Sanitise
+    df = df.loc[df["type"] == "Delivery Area"]
+    return df
 
 
 def find_locales_inside(gmaps: googlemaps.Client, au_suburbs: pd.DataFrame, address: str):
@@ -29,6 +32,7 @@ def main(gm_key: str):
     suburbs = find_locales_inside(gmaps, au_suburbs, "Sydney NSW Australia")
     print(suburbs)
 
+    """
     # Look up an address with reverse geocoding
     reverse_geocode_result = gmaps.reverse_geocode((40.714224, -73.961452))
     print(reverse_geocode_result)
@@ -40,6 +44,7 @@ def main(gm_key: str):
                                          mode="transit",
                                          departure_time=now)
     print(directions_result)
+    """
 
 
 if __name__ == "__main__":
