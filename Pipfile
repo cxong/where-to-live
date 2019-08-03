@@ -7,6 +7,8 @@ verify_ssl = true
 
 [packages]
 googlemaps = "*"
+pandas = "*"
+munch = "*"
 
 [requires]
 python_version = "3.7"
