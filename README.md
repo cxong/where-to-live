@@ -8,6 +8,7 @@ Requirements:
 - python3
 - pipenv
 - Get Google Maps API key https://developers.google.com/maps/gmp-get-started (you will need a credit card 💳 or google play account)
+- Place API key in environment variable `GOOGLE_MAPS_KEY`
 
 ```
 pipenv install
