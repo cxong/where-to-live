@@ -4,13 +4,34 @@
     "work": {
       "address": "200 Barangaroo Avenue, Sydney NSW 2000",
       "distance_km": [
-        0,
+        2,
         10
       ],
-      "commute_mins": [
-        0,
-        30
-      ]
+      "commute": {
+        "modes": {
+          "transit:bus": {
+            "minutes": [
+              0,
+              20
+            ],
+            "transit_routing_preference": "fewer_transfers"
+          },
+          "transit:rail": {
+            "minutes": [
+              0,
+              30
+            ]
+          },
+          "bicycling": {
+            "avoid": "highways",
+            "minutes": [
+              0,
+              50
+            ]
+          }
+        },
+        "arrival_time": "2019-08-05 09:00:00"
+      }
     }
   }
 }
