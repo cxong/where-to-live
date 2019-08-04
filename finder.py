@@ -89,18 +89,24 @@ class GSuburbFinder:
 
     def _filter_commute(self, label: str, f: Munch, coords: LatLong):
         if "commute" in f:
-            destinations = coords.tuple
             arrival_time = dateutil.parser.parse(f.commute.arrival_time) if "arrival_time" in f.commute else None
             for mode_name, mode in f.commute.modes.items():
-                origins = list(zip(self.suburbs.lat, self.suburbs.lon))
+                suburbs = list(zip(self.suburbs.lat, self.suburbs.lon))
                 transit_mode = None
                 if mode_name.startswith("transit:"):
                     mode_name, transit_mode = mode_name.split(":")
                 results = []
-                for origin_chunk in chunk(origins, self.MAX_ORIGINS_DESTS - 1):
+                for suburbs_chunked in chunk(suburbs, self.MAX_ORIGINS_DESTS - 1):
+                    if f.commute.is_origin:
+                        origins = suburbs_chunked
+                        destinations = coords.tuple
+                    else:
+                        origins = coords.tuple
+                        destinations = suburbs_chunked
+                    # https://github.com/googlemaps/google-maps-services-python/blob/master/googlemaps/distance_matrix.py
                     result = googlemaps.distance_matrix.distance_matrix(
                         self._gmaps,
-                        origin_chunk,
+                        origins,
                         destinations,
                         mode=mode_name,
                         avoid=mode.get("avoid"),
@@ -109,14 +115,18 @@ class GSuburbFinder:
                         transit_mode=transit_mode,
                         transit_routing_preference=mode.get("transit_routing_preference")
                     )
-                    results += result['rows']
+                    if f.commute.is_origin:
+                        results += [row["elements"][0] for row in result['rows']]
+                    else:
+                        results += result['rows'][0]['elements']
                 results_df = pd.DataFrame([{
-                    "distance_m": row["elements"][0]["distance"]["value"],
-                    "duration_s": row["elements"][0]["duration"]["value"]
+                    "distance_m": row["distance"]["value"],
+                    "duration_s": row["duration"]["value"]
                 } for row in results])
                 mode_label = transit_mode or mode_name
                 if len(self.suburbs) != len(results_df):
                     logging.error("Cannot find valid commute results for %s (%s:%s)", label, mode_name, transit_mode)
+                    continue
                 self.suburbs[f"{label}_{mode_label}_distance_km"] = results_df.distance_m.values / 1000
                 self.suburbs[f"{label}_{mode_label}_duration_mins"] = results_df.duration_s.values / 60
 

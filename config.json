@@ -8,6 +8,7 @@
         10
       ],
       "commute": {
+        "is_origin": false,
         "modes": {
           "transit:bus": {
             "minutes": [
