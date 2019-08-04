@@ -1,0 +1,16 @@
+{
+  "gm_key_env": "GOOGLE_MAPS_KEY",
+  "filters": {
+    "work": {
+      "address": "200 Barangaroo Avenue, Sydney NSW 2000",
+      "distance_km": [
+        0,
+        10
+      ],
+      "commute_mins": [
+        0,
+        30
+      ]
+    }
+  }
+}
