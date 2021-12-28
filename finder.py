@@ -1,4 +1,5 @@
 import logging
+import math
 from dataclasses import dataclass
 from math import radians, sin, cos, atan2, sqrt
 
@@ -120,13 +121,10 @@ class GSuburbFinder:
                     else:
                         results += result['rows'][0]['elements']
                 results_df = pd.DataFrame([{
-                    "distance_m": row["distance"]["value"],
-                    "duration_s": row["duration"]["value"]
+                    "distance_m": row.get("distance", {}).get("value", math.inf),
+                    "duration_s": row.get("duration", {}).get("value", math.inf)
                 } for row in results])
                 mode_label = transit_mode or mode_name
-                if len(self.suburbs) != len(results_df):
-                    logging.error("Cannot find valid commute results for %s (%s:%s)", label, mode_name, transit_mode)
-                    continue
                 self.suburbs[f"{label}_{mode_label}_distance_km"] = results_df.distance_m.values / 1000
                 self.suburbs[f"{label}_{mode_label}_duration_mins"] = results_df.duration_s.values / 60
 

@@ -18,6 +18,7 @@ def main(config: str):
     for label, f in cfg.filters.items():
         finder.apply_filter(label, f)
     print(finder.suburbs)
+    finder.suburbs.to_csv("out.csv")
 
 
 if __name__ == "__main__":
